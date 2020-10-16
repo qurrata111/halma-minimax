@@ -14,6 +14,9 @@ class Node:
     def get_player(self):
         return self.player
 
+    def get_value(self):
+        return self.nodeValue
+
     def get_depth(self):
         return self.nodeDepth
 
@@ -23,5 +26,5 @@ class Node:
     def can_explore(self):
         return self.to_explore
     
-    def set_node_value(self, val):
-        self.nodeValue = val    
+    def set_value(self, val):
+        self.nodeValue = val

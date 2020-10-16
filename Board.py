@@ -21,6 +21,9 @@ class Board:
         self.set_red_corner(int(size/2))
         self.set_green_corner(int(size/2))
         self.chosenMove = 0
+
+    def get_board(self):
+        return self.board
     
     def get_height(self):
         return self.size
@@ -58,7 +61,7 @@ class Board:
             for col in range (startCol, endCol):
                 self.greenSide.append((curRow, col))
 
-    def init_piece(self, size):
+    def set_pieces(self, size):
         for i in range (0, size):
             # merah
             for j in range (0, size-i):
@@ -68,7 +71,6 @@ class Board:
             startCol = size*2 - 1 - i
             endCol = size * 2
             for col in range (startCol, endCol):
-                print(curRow, col)
                 self.set_piece_at(self.GREEN, curRow, col)
 
     def get_piece_at(self, row, col):
@@ -95,42 +97,60 @@ class Board:
         elif self.turn == 2:
             self.turn = 1
     
-    def getTheWinner(self):
+    def get_winner(self):
         greenWin = False
         redWin = False
 
         # cek jika semua pemain green sudah berada di sisi merah
         for pos in self.greenSide:
-            if self.get_piece_at(pos[0], pos[1]) == False:
+            if self.get_piece_at(pos[0], pos[1]) == False or self.get_piece_at(pos[0], pos[1]) == 2:
                 redWin = False
                 break
-            elif self.get_piece_at(pos[0], pos[1]) == True:
+            elif self.get_piece_at(pos[0], pos[1]) == 1:
                 redWin = True
         for pos in self.redSide:
-            if self.get_piece_at(pos[0], pos[1]) == False:
+            if self.get_piece_at(pos[0], pos[1]) == False or self.get_piece_at(pos[0], pos[1]) == 1:
                 greenWin = False
                 break
-            elif self.get_piece_at(pos[0], pos[1]) == True:
+            elif self.get_piece_at(pos[0], pos[1]) == 2:
                 greenWin = True
+        winner = (redWin, greenWin)
         
-        return (redWin, greenWin)
+        return winner
 
     def print_board(self):
+        for i in range (0, self.get_height()):
+            if i==0:
+                print("  ", i, end="  ")
+            elif i==self.get_height()-1:
+                print(i)
+            else:
+                print(i, end="  ")
+        count = 0
         for row in self.board:
+            print(count, end=" ")
             print(row)
+            count +=1
         print()
+
     def set_board(self, new_board):
         self.board = new_board.copy()
 
-b = Board(8)
-# awal
-print(b.get_green_position())
-print(b.get_red_position())
-b.print_board()
-print()
-# inisiasi
-b.init_piece(4)
-b.print_board()
-# after move
-b.move_piece((0,3), (0,4))
-b.print_board()
+def main():
+    b = Board(8)
+    # awal
+    print(b.get_green_position())
+    print(b.get_red_position())
+    b.print_board()
+    # inisiasi
+    b.set_pieces(4)
+    print(b.get_green_position())
+    print(b.get_red_position())
+    b.print_board()
+    # after move
+    b.move_piece((0,3), (0,4))
+    b.print_board()
+    print(b.get_winner())
+    print(len(b.get_board()))
+
+# main()

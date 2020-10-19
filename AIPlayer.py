@@ -15,6 +15,7 @@ class AIPlayer:
         self.prune = 0
         self.alphaBeta = alphaBeta
         self.boards = 0
+        self.total_time = 0
 
     def jump_search(self, row, col, board):
         offsets = [-1,0,1]
@@ -117,7 +118,17 @@ class AIPlayer:
                             distance_list.append(self.distance((row, col), goal))
                             green += max(distance_list) if len(distance_list) else -100
     
-        value = red/green if node.player == 1 else green/red
+        #value = red/green if node.player == 1 else green/red
+        if node.player == 1:
+            if green != 0:
+                value = red/green
+            else:
+                value = 0
+        else:
+            if red != 0:
+                value = green/red
+            else:
+                value = 0
         #value = float("inf") if cek_win[0] else float("inf") # kalau sudah ada yang menang
         if cek_win[0]:
             value = float("inf")
@@ -137,7 +148,10 @@ class AIPlayer:
         node_max, best_move = self.max_value(node, float("-inf"), float("inf"))
         data_board = node.get_board()
         print("best move", best_move)
-        data_board.move_piece(best_move[0], best_move[1])
+        try:
+            data_board.move_piece(best_move[0], best_move[1])
+        except:
+            pass
         print("Waktu yg dibutuhkan :", self.end-self.start, "detik untuk berpindah.")
         print("Pruning             :", self.prune, "cabang.")
         print("Generated           :", self.boards, "board.")
@@ -146,10 +160,10 @@ class AIPlayer:
         self.boards = 0
         data_board.chosenMove = best_move
         data_board.changeTurn()
-        return node_max, best_move
+        return node_max, best_move, self.end-self.start
 
     def max_value (self, node, alpha, beta):
-        print("Get maximum value from node...")
+        #print("Get maximum value from node...")
         self.end = time.time()
         board = node.get_board()
         
@@ -204,7 +218,7 @@ class AIPlayer:
         return return_node, best_move
 
     def min_value (self, node, alpha, beta):
-        print("Get minimum value from node...")
+        #print("Get minimum value from node...")
         self.end = time.time()
         board = node.get_board()
         cek_win = board.get_winner()

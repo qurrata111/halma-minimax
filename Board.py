@@ -136,21 +136,11 @@ class Board:
     def set_board(self, new_board):
         self.board = new_board.copy()
 
-def main():
-    b = Board(8)
-    # awal
-    print(b.get_green_position())
-    print(b.get_red_position())
-    b.print_board()
-    # inisiasi
-    b.set_pieces(4)
-    print(b.get_green_position())
-    print(b.get_red_position())
-    b.print_board()
-    # after move
-    b.move_piece((0,3), (0,4))
-    b.print_board()
-    print(b.get_winner())
-    print(len(b.get_board()))
-
-# main()
+    def is_empty_cell(self, position):
+        return (self.get_piece_at(position[0],position[1]) == 0)
+    
+    def is_valid_move(self, start_pos, end_pos):
+        if self.is_empty_cell(end_pos):
+            return True
+        else:
+            return False

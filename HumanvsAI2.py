@@ -1,8 +1,8 @@
 from Board import Board
 from Node import Node
-from AIPlayer import AIPlayer
+from AIPlayer2 import AIPlayer2
 
-class HumanvsAI:
+class HumanvsAI2:
     def __init__(self, bsize, tlimit, option):
         self.p1 = option
         if (option == 1):
@@ -10,7 +10,7 @@ class HumanvsAI:
         else:
             self.p2 = 1
 
-        self.machine = AIPlayer(tlimit, 5)
+        self.machine = AIPlayer2(tlimit)
         # create board
         self.board_game = Board(bsize)
         self.bsize = bsize
@@ -48,7 +48,7 @@ class HumanvsAI:
             self.board_game.print_board()
             # giliran AI yang pindah
             root_node = Node(self.p1, self.board_game, 2) # buat node
-            _, best_moves= self.machine.alphaBeta_minimax(root_node)
+            _, best_moves= self.machine.localSearch_minimax(root_node)
             print("Giliran AI!")
             print("board setelah AI memilih moves")
             print("best moves", best_moves)
@@ -61,4 +61,4 @@ class HumanvsAI:
             print("GREEN player win!")
         if winner[0] == True and winner[1] == True:
             print("Game tied!")
-        print("Total waktu yang dibutuhkan alpha beta minimax", self.machine.total_time, "detik.")
+        print("Total waktu yang dibutuhkan minimax local search", self.machine.total_time, "detik.")

@@ -3,10 +3,10 @@ import math
 from Node import Node
 from Board import Board
 
-# pakai pruning minimax
+# pakai local search minimax
 
-class AIPlayer:
-    def __init__(self, timeLimit, alphaBeta):
+class AIPlayer2:
+    def __init__(self, timeLimit):
         self.move_list = []
         self.selected_piece = 0
         self.selected_post = ()
@@ -14,8 +14,6 @@ class AIPlayer:
         self.limit_time = timeLimit
         self.start = 0
         self.end = 0
-        self.prune = 0
-        self.alphaBeta = alphaBeta
         self.boards = 0
         self.total_time = 0
 
@@ -145,9 +143,9 @@ class AIPlayer:
     def distance(self, p1, p2):
         return math.sqrt((p2[0]-p1[0])**2 + (p2[1]-p1[1])**2)
 
-    def alphaBeta_minimax(self, node):
+    def localSearch_minimax(self, node):
         self.start = time.time()
-        node_max, best_move = self.max_value(node, float("-inf"), float("inf"))
+        node_max, best_move = self.max_value(node)
         data_board = node.get_board()
         print("best move", best_move)
         try:
@@ -155,17 +153,15 @@ class AIPlayer:
         except:
             pass
         print("Waktu yg dibutuhkan :", self.end-self.start, "detik untuk berpindah.")
-        print("Pruning             :", self.prune, "cabang.")
         print("Generated           :", self.boards, "board.")
         # clear
         self.total_time += (self.end-self.start)
-        self.prune = 0
         self.boards = 0
         data_board.chosenMove = best_move
         data_board.changeTurn()
         return node_max, best_move
 
-    def max_value (self, node, alpha, beta):
+    def max_value (self, node):
         #print("Get maximum value from node...")
         self.end = time.time()
         board = node.get_board()
@@ -201,26 +197,19 @@ class AIPlayer:
                 next_node = Node(player, board_copy, node.get_depth()-1)
                 next_node.move = (move, valid_move)
 
-                child_node, _ = self.min_value(next_node, alpha, beta)
+                child_node, _ = self.min_value(next_node)
                 board_copy.move_piece(valid_move, move)
                 if value < child_node.get_value():
                     move_from = move
                     move_to = valid_move
                     best_move = (move_from, move_to)
                 value = max(value, child_node.get_value())
-
                 return_node = next_node
-                if value > beta and self.alphaBeta:
-                    self.prune += 1
-                    return_node.set_value(beta)
-                    return return_node, None
-                
-                alpha = max(alpha, value)
         
         return_node.set_value(value)
         return return_node, best_move
 
-    def min_value (self, node, alpha, beta):
+    def min_value (self, node):
         #print("Get minimum value from node...")
         self.end = time.time()
         board = node.get_board()
@@ -255,7 +244,7 @@ class AIPlayer:
                 next_node = Node(player, board_copy, node.get_depth()-1)
                 next_node.move = (move, valid_move)
 
-                child_node, _ = self.max_value(next_node, alpha, beta)
+                child_node, _ = self.max_value(next_node)
                 board_copy.move_piece(valid_move, move)
                 if vals > child_node.get_value():
                     move_from = move
@@ -263,12 +252,16 @@ class AIPlayer:
                     best_move = (move_from, move_to)
                 vals = min(vals, child_node.get_value())
                 return_node = next_node
-                if vals < alpha and self.alphaBeta:
-                    self.prune += 1
-                    return_node.set_value(vals)
-                    return return_node, None
-                
-                beta = min(beta, vals)
         
         return_node.set_value(vals)
         return return_node, best_move
+
+# board = Board(8)
+# board.set_pieces(4)
+# board.print_board()
+# board.move_piece((1,1),(2,2))
+# board.print_board()
+# node = Node(1, board, 3)
+# mesin = AIPlayer2(3)
+# _, best_moves = mesin.localSearch_minimax(node)
+# print(best_moves)
